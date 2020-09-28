@@ -2,14 +2,14 @@ package fr.bretzel.bcore.nms.packet.out;
 
 import fr.bretzel.bcore.nms.entity.MCEntity;
 import fr.bretzel.bcore.nms.packet.Packet;
-import fr.bretzel.bcore.utils.Reflection;
+import fr.bretzel.bcore.utils.reflection.Reflection;
 
 import java.lang.reflect.Constructor;
 
 public class PacketPlayOutEntityTeleport extends Packet
 {
 
-    private MCEntity mcEntity;
+    private final MCEntity mcEntity;
 
     public PacketPlayOutEntityTeleport(MCEntity mcEntity)
     {

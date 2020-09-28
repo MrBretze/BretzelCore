@@ -1,4 +1,4 @@
-package fr.bretzel.bcore.utils;
+package fr.bretzel.bcore.utils.reflection;
 
 import fr.bretzel.bcore.BCore;
 

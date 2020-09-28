@@ -1,22 +1,12 @@
 package fr.bretzel.bcore.nms;
 
-import fr.bretzel.bcore.utils.Reflection;
+import fr.bretzel.bcore.utils.reflection.CraftBukkitReflection;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class World
 {
     private final org.bukkit.World bukkitWorld;
-
-    private static final Class<?> craftworld_class;
-    private static final Method get_handle_method;
-
-    static
-    {
-        craftworld_class = Reflection.getClass(Reflection.ClassType.CRAFT_BUKKIT, "CraftWorld");
-        get_handle_method = Reflection.getMethod(craftworld_class, "getHandle");
-    }
 
     public World(org.bukkit.World world)
     {
@@ -30,14 +20,14 @@ public class World
 
     public Object getCraftWorld()
     {
-        return craftworld_class.cast(getBukkitWorld());
+        return CraftBukkitReflection.CLASS_WORLD.cast(getBukkitWorld());
     }
 
     public Object getWorld()
     {
         try
         {
-            return get_handle_method.invoke(getCraftWorld());
+            return CraftBukkitReflection.METHOD_WORLD_GET_HANDLE.invoke(getCraftWorld());
         } catch (IllegalAccessException | InvocationTargetException e)
         {
             return null;

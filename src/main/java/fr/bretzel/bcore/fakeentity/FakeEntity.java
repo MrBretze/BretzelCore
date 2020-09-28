@@ -1,10 +1,10 @@
 package fr.bretzel.bcore.fakeentity;
 
-import fr.bretzel.bcore.player.BPlayer;
 import fr.bretzel.bcore.fakeentity.api.IFake;
 import fr.bretzel.bcore.nms.packet.out.PacketPlayOutEntityDestroy;
 import fr.bretzel.bcore.nms.packet.out.PacketPlayOutEntityTeleport;
 import fr.bretzel.bcore.nms.packet.out.PacketPlayOutSpawnEntity;
+import fr.bretzel.bcore.player.BPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -81,7 +81,7 @@ public abstract class FakeEntity implements IFake
             return;
 
         getPlayerHasEntity().add(player);
-        BPlayer.getBPlayer(player).sendPacket(new PacketPlayOutSpawnEntity(getEntity()));
+        BPlayer.getBPlayer(player).getPlayerConnection().sendPacket(new PacketPlayOutSpawnEntity(getEntity()));
     }
 
     @Override
@@ -89,13 +89,13 @@ public abstract class FakeEntity implements IFake
     {
         if (!getPlayerHasEntity().contains(player) || !player.isOnline())
             return;
-        BPlayer.getBPlayer(player).sendPacket(new PacketPlayOutEntityDestroy(getEntity()));
+        BPlayer.getBPlayer(player).getPlayerConnection().sendPacket(new PacketPlayOutEntityDestroy(getEntity()));
     }
 
     public void teleport(Location location)
     {
         setLocation(location);
-        getPlayerHasEntity().forEach(player -> BPlayer.getBPlayer(player).sendPacket(new PacketPlayOutEntityTeleport(getEntity())));
+        getPlayerHasEntity().forEach(player -> BPlayer.getBPlayer(player).getPlayerConnection().sendPacket(new PacketPlayOutEntityTeleport(getEntity())));
     }
 
     public CopyOnWriteArrayList<Player> getPlayerHasEntity()

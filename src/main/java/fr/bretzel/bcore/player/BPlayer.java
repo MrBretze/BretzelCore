@@ -1,13 +1,12 @@
 package fr.bretzel.bcore.player;
 
-import fr.bretzel.bcore.nms.packet.Packet;
-import fr.bretzel.bcore.utils.Reflection;
+import fr.bretzel.bcore.connection.PlayerConnection;
+import fr.bretzel.bcore.utils.reflection.CraftBukkitReflection;
+import fr.bretzel.bcore.utils.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -31,29 +30,31 @@ public class BPlayer
         playerCachedMap.put(uuid, bPlayer = new BPlayer(uuid));
         return bPlayer;
     }
+    //////////////////////////END STATIC VARIABLE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    private final UUID uniqueId;
+    private final PlayerConnection player_connection;
+    private Player player;
+    private final Object nms_player;
+
+    private Location location;
+
+    protected BPlayer(Player player)
+    {
+        this.uniqueId = player.getUniqueId();
+        this.player = player;
+
+        this.player_connection = new PlayerConnection(this);
+        nms_player = Reflection.invoke(CraftBukkitReflection.METHOD_PLAYER_GET_HANDLE, CraftBukkitReflection.CLASS_PLAYER.cast(getPlayer()));
+    }
 
     protected BPlayer(UUID player)
     {
         this.uniqueId = player;
+        this.player_connection = new PlayerConnection(this);
+
+        nms_player = Reflection.invoke(CraftBukkitReflection.METHOD_PLAYER_GET_HANDLE, CraftBukkitReflection.CLASS_PLAYER.cast(getPlayer()));
     }
-    //////////////////////////END STATIC VARIABLE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-    /////////////////////////Method, Field, and Class init\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    private static final Class<?> packetClass = Reflection.getClass(Reflection.ClassType.MINECRAFT_SERVER, "Packet");
-    private static final Class<?> craftplayerClass = Reflection.getClass(Reflection.ClassType.CRAFT_BUKKIT_ENTITY, "CraftPlayer");
-    private static final Class<?> entity_player = Reflection.getClass(Reflection.ClassType.MINECRAFT_SERVER, "EntityPlayer");
-
-    private static final Method getHandle = Reflection.getMethod(craftplayerClass, "getHandle");
-
-    private static final Field player_connection = Reflection.getField(entity_player, "playerConnection");
-
-    private static final Method send_packet = Reflection.getMethod(player_connection.getType(), "sendPacket", packetClass);
-    ////////////////////End of Method, Field, and Class init\\\\\\\\\\\\\\\\\\\\\\\\\
-
-    private final UUID uniqueId;
-    private Player player;
-
-    private Location location;
 
     public Player getPlayer()
     {
@@ -63,11 +64,14 @@ public class BPlayer
         return player;
     }
 
-    public void sendPacket(Packet packet)
+    public Object getNMSPlayer()
     {
-        Object player = Reflection.invoke(getHandle, craftplayerClass.cast(getPlayer()));
-        Object playerConnection = Reflection.get(player_connection, player);
-        Reflection.invoke(send_packet, playerConnection, packetClass.cast(packet.toNMSPacket()));
+        return nms_player;
+    }
+
+    public PlayerConnection getPlayerConnection()
+    {
+        return player_connection;
     }
 
     /**
