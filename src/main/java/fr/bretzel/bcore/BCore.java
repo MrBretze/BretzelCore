@@ -1,6 +1,7 @@
 package fr.bretzel.bcore;
 
 import fr.bretzel.bcore.bplugin.BPlugin;
+import fr.bretzel.bcore.listener.BCoreListener;
 import org.bukkit.Bukkit;
 
 public final class BCore extends BPlugin
@@ -31,6 +32,8 @@ public final class BCore extends BPlugin
     @Override
     public void onEnable()
     {
+        logInfo("Registering all Listener");
+        BCoreListener.registerAllListener();
     }
 
     @Override
