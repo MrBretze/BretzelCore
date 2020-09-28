@@ -1,15 +1,15 @@
 package fr.bretzel.bcore.player;
 
-import fr.bretzel.bcore.bplugin.BPlugin;
 import fr.bretzel.bcore.nms.packet.Packet;
-import fr.bretzel.bcore.player.persistence.PersistenceData;
 import fr.bretzel.bcore.utils.Reflection;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class BPlayer
@@ -51,17 +51,16 @@ public class BPlayer
     ////////////////////End of Method, Field, and Class init\\\\\\\\\\\\\\\\\\\\\\\\\
 
     private final UUID uniqueId;
+    private Player player;
 
-    private final HashMap<BPlugin, PersistenceData> persistenceDataMap = new HashMap<>();
+    private Location location;
 
     public Player getPlayer()
     {
-        return Bukkit.getPlayer(uniqueId);
-    }
+        if (player == null || !player.isOnline())
+            player = Bukkit.getPlayer(uniqueId);
 
-    public void addPersistenceData(BPlugin bPlugin, PersistenceData data)
-    {
-
+        return player;
     }
 
     public void sendPacket(Packet packet)
@@ -69,5 +68,42 @@ public class BPlayer
         Object player = Reflection.invoke(getHandle, craftplayerClass.cast(getPlayer()));
         Object playerConnection = Reflection.get(player_connection, player);
         Reflection.invoke(send_packet, playerConnection, packetClass.cast(packet.toNMSPacket()));
+    }
+
+    /**
+     * I don't use the Bukkit location but a detect manually with the packet
+     *
+     * @return The Location of the player
+     */
+    public Location getLocation()
+    {
+        return location;
+    }
+
+    /**
+     * Set the location of the player
+     *
+     * @param location the new location
+     */
+    public void setLocation(Location location)
+    {
+        this.location = location;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof BPlayer)) return false;
+
+        BPlayer bPlayer = (BPlayer) o;
+
+        return Objects.equals(uniqueId, bPlayer.uniqueId);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return uniqueId != null ? uniqueId.hashCode() : 0;
     }
 }
