@@ -1,8 +1,12 @@
-package fr.bretzel.bcore.nms.packet;
+package fr.bretzel.bcore.connection.packet;
 
 public abstract class Packet
 {
     private Object nmsPacket;
+
+    public Packet()
+    {
+    }
 
     protected void setNMSPacket(Object nmsPacket)
     {
@@ -13,4 +17,6 @@ public abstract class Packet
     {
         return nmsPacket;
     }
+
+    public abstract Class<?> getNMSClass();
 }

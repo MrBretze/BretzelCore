@@ -1,9 +1,9 @@
 package fr.bretzel.bcore.fakeentity;
 
+import fr.bretzel.bcore.connection.packet.PacketPlayOutEntityDestroy;
+import fr.bretzel.bcore.connection.packet.PacketPlayOutEntityTeleport;
+import fr.bretzel.bcore.connection.packet.PacketPlayOutSpawnEntity;
 import fr.bretzel.bcore.fakeentity.api.IFake;
-import fr.bretzel.bcore.nms.packet.out.PacketPlayOutEntityDestroy;
-import fr.bretzel.bcore.nms.packet.out.PacketPlayOutEntityTeleport;
-import fr.bretzel.bcore.nms.packet.out.PacketPlayOutSpawnEntity;
 import fr.bretzel.bcore.player.BPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,9 +17,8 @@ import java.util.stream.Collectors;
 public abstract class FakeEntity implements IFake
 {
     private static final CopyOnWriteArrayList<FakeEntity> allFakeEntity = new CopyOnWriteArrayList<>();
-
-    private Location location;
     private final CopyOnWriteArrayList<Player> playerHasEntity = new CopyOnWriteArrayList<>();
+    private Location location;
 
     public FakeEntity(Location location)
     {
@@ -27,10 +26,9 @@ public abstract class FakeEntity implements IFake
         allFakeEntity.add(this);
     }
 
-    public void setLocation(Location location)
+    public static CopyOnWriteArrayList<FakeEntity> getAllFakeEntity()
     {
-        this.location = location;
-        getEntity().setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        return allFakeEntity;
     }
 
     @Override
@@ -74,6 +72,12 @@ public abstract class FakeEntity implements IFake
         return location;
     }
 
+    public void setLocation(Location location)
+    {
+        this.location = location;
+        getEntity().setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    }
+
     @Override
     public void sendSpawnPacket(Player player)
     {
@@ -101,10 +105,5 @@ public abstract class FakeEntity implements IFake
     public CopyOnWriteArrayList<Player> getPlayerHasEntity()
     {
         return playerHasEntity;
-    }
-
-    public static CopyOnWriteArrayList<FakeEntity> getAllFakeEntity()
-    {
-        return allFakeEntity;
     }
 }

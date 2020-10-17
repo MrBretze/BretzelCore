@@ -1,4 +1,4 @@
-package fr.bretzel.bcore.utils.reflection;
+package fr.bretzel.bcore.utils;
 
 import fr.bretzel.bcore.BCore;
 
@@ -6,6 +6,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -35,6 +38,8 @@ public class Reflection
                 return classes.getDeclaredField(fieldName);
             } catch (NoSuchFieldException ignored)
             {
+                if (classes.getSuperclass() != Object.class)
+                    return getField(classes.getSuperclass(), fieldName);
                 return null;
             }
         }
@@ -57,9 +62,7 @@ public class Reflection
                     Class<?> methodClass = methodsTypes[i];
                     Class<?> wantedType = finalArgTypes[i];
                     if (methodClass.equals(wantedType) || methodClass.isAssignableFrom(wantedType))
-                    {
                         return true;
-                    }
                 }
                 return true;
             }
@@ -137,20 +140,51 @@ public class Reflection
 
     public static Object get(Field field, Object instance)
     {
+        if (!field.isAccessible())
+            field.setAccessible(true);
         try
         {
             return field.get(instance);
         } catch (IllegalAccessException e)
         {
-            e.printStackTrace();
             return null;
         }
+    }
+
+    public static Object getFieldIndex(int index, Object o)
+    {
+        try
+        {
+            return getAllField(o.getClass()).get(index).get(o);
+        } catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+            return o;
+        }
+    }
+
+    private static List<Field> getAllField(Class<?> clazz)
+    {
+        ArrayList<Field> arrayList = new ArrayList<>();
+
+        arrayList.addAll(Arrays.asList(clazz.getFields()));
+        arrayList.addAll(Arrays.asList(clazz.getDeclaredFields()));
+
+        arrayList.forEach(field ->
+        {
+            if (!field.isAccessible())
+                field.setAccessible(true);
+        });
+
+        return arrayList;
     }
 
     public enum ClassType
     {
         CRAFT_BUKKIT("org.bukkit.craftbukkit." + BCore.getVersion() + "."),
         CRAFT_BUKKIT_ENTITY(ClassType.CRAFT_BUKKIT, "entity."),
+        CRAFT_BUKKIT_BLOCK(ClassType.CRAFT_BUKKIT, "block."),
+        CRAFT_BUKKIT_UTIL(ClassType.CRAFT_BUKKIT, "util."),
         MINECRAFT_SERVER("net.minecraft.server." + BCore.getVersion() + ".");
 
         private final String dir;

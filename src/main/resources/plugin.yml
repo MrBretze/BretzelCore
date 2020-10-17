@@ -1,0 +1,11 @@
+name: BCore
+version: @version@
+main: fr.bretzel.bcore.BCore
+api-version: 1.13
+authors: [ MrBretzel ]
+description: Core plugin for all bretzel core
+commands:
+  bcore:
+    description: The bcore command !
+  intercept:
+    description: The quake command !

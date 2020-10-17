@@ -17,12 +17,12 @@ public abstract class BPlugin extends JavaPlugin
 
     public void logInfo(String msg)
     {
-        logger.log(Level.INFO, "[" + getName() + "] " + msg);
+        getLogger().log(Level.INFO, "[" + getName() + "] " + msg);
     }
 
     public void logWarning(String msg)
     {
-        logger.log(Level.WARNING, "[" + getName() + "] " + msg);
+        getLogger().log(Level.WARNING, "[" + getName() + "] " + msg);
     }
 
     @Override

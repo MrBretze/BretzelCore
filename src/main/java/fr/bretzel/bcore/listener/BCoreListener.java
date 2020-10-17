@@ -8,11 +8,11 @@ import org.bukkit.plugin.PluginManager;
 public class BCoreListener
 {
     //Instance of BukkitPlugin Manager
-    private static PluginManager MANAGER;
+    private static final PluginManager MANAGER;
 
     private static PlayerListener PLAYER_LISTENER;
 
-    public BCoreListener()
+    static
     {
         MANAGER = Bukkit.getPluginManager();
     }
@@ -23,7 +23,7 @@ public class BCoreListener
     public static void registerAllListener()
     {
         //Player Listener
-        BCore.INSTANCE.logInfo("Enabling: PlayerListener.class");
+        System.out.println("Enabling: PlayerListener.class");
         MANAGER.registerEvents(PLAYER_LISTENER = new PlayerListener(), BCore.INSTANCE);
     }
 

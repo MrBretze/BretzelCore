@@ -1,20 +1,20 @@
 package fr.bretzel.bcore.nms.entity;
 
-import fr.bretzel.bcore.nms.World;
+import fr.bretzel.bcore.nms.BWorld;
+import fr.bretzel.bcore.utils.Reflection;
 import fr.bretzel.bcore.utils.reflection.EntityReflection;
-import fr.bretzel.bcore.utils.reflection.Reflection;
 import org.bukkit.Location;
 
 public abstract class MCEntity
 {
-    private Object nms_entity_object = null;
-    private final World world;
+    private final BWorld BWorld;
     private final Location location;
+    private Object nms_entity_object = null;
 
     protected MCEntity(Location location)
     {
         this.location = location;
-        this.world = new World(location.getWorld());
+        this.BWorld = new BWorld(location.getWorld());
     }
 
     public Location getLocation()
@@ -22,9 +22,9 @@ public abstract class MCEntity
         return location;
     }
 
-    public World getWorld()
+    public BWorld getWorld()
     {
-        return world;
+        return BWorld;
     }
 
     public Object toNMSEntity()

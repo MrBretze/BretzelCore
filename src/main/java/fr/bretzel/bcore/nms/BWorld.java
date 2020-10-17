@@ -4,11 +4,11 @@ import fr.bretzel.bcore.utils.reflection.CraftBukkitReflection;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class World
+public class BWorld
 {
     private final org.bukkit.World bukkitWorld;
 
-    public World(org.bukkit.World world)
+    public BWorld(org.bukkit.World world)
     {
         this.bukkitWorld = world;
     }
@@ -23,7 +23,7 @@ public class World
         return CraftBukkitReflection.CLASS_WORLD.cast(getBukkitWorld());
     }
 
-    public Object getWorld()
+    public Object getNMSWorld()
     {
         try
         {
